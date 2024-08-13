@@ -1,64 +1,51 @@
 import arcade
 import arcade.color
-from bresenham import get_line, get_circle
+
+from bresenham import get_line
 
 # definicion de constantes
 SCREEN_WIDTH = 400
 SCREEN_HEIGHT = 400
-SCREEN_TITLE = "Circulos con bresenham"
+SCREEN_TITLE = "Figuras Geométricas con Bresenham"
 
 
 class BresenhamWindow(arcade.Window):
     def __init__(self):
         super().__init__(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
         arcade.set_background_color(arcade.color.BLACK)
-        self.pixel_size = 10
-        # circulo
-        self.xc = 5
-        self.yc = 10
-        self.r = 2.5
-        # linea
-        self.x0, self.y0, self.x1, self.y1 = 20, 20, 150, 70
-        self.circle_color = arcade.color.RED_DEVIL
+        self.pixel_size = 5
+        #Puntos para el rectangulo
+        self.xr = 8
+        self.yr = 8
+        self.wr = 12
+        self.hr = 20
+        
+        # Puntos para el triángulo
+        self.xt = 10
+        self.yt = 10
+        self.base_t = 20
+        self.height_t = 15
 
-        # self.speed = 25
-        # self.velocity = [25, 20]
-
-    def on_update(self, delta_time: float):
-        pass
-        # self.xc += delta_time * self.velocity[0]
-        # self.yc += delta_time * self.velocity[1]
-
-        # # Logica del rebote en X
-        # if (self.xc + self.r > SCREEN_WIDTH // self.pixel_size 
-        #     or self.xc - self.r < 0):
-        #     self.velocity[0] = -1 * self.velocity[0]
-
-        # # Logica del rebote en Y
-        # if (self.yc + self.r > SCREEN_HEIGHT // self.pixel_size 
-        #     or self.yc - self.r < 0):
-        #     self.velocity[1] = -1 * self.velocity[1]
+        # Puntos para el pentágono
+        self.xp = 15
+        self.yp = 25
+        self.rp = 10
+    
 
     def on_draw(self):
         arcade.start_render()
-        points = get_circle(
-            self.xc,
-            self.yc,
-            self.r
-        )
-        line_points = get_line(
-            self.x0, self.y0,
-            self.x1, self.y1
-        )
         self.draw_grid()
-       # self.draw_circle_points(points, arcade.color.DARK_YELLOW)
-       # self.draw_scaled_circle(
-        #    self.xc,
-        #    self.yc,
-        #    self.r
-        #)
-        #self.draw_line_points(line_points, arcade.color.ALICE_BLUE)
-        self.draw_pentagon(self.xc, self.yc, self.r, arcade.color.DARK_YELLOW)
+        #self.draw_rectangle(self.xr, self.yr, self.wr, self.hr, arcade.color.AFRICAN_VIOLET)
+        #self.draw_triangle_isosceles(self.xt, self.yt, self.base_t, self.height_t, arcade.color.ALIZARIN_CRIMSON)
+        #self.draw_pentagon(self.xp, self.yp, self.rp, arcade.color.BLUE)
+        self.draw_house()
+
+    def draw_house(self):
+        self.draw_rectangle(10, 10, 40, 30, arcade.color.BRICK_RED)
+        self.draw_triangle_isosceles(10, 40, 40, 5, arcade.color.DARK_BROWN)
+        self.draw_rectangle(25, 10, 10, 15, arcade.color.BROWN)
+        self.draw_rectangle(15, 25, 10, 10, arcade.color.SKY_BLUE)
+
 
     def draw_grid(self):
         # lineas verticales
@@ -70,7 +57,7 @@ class BresenhamWindow(arcade.Window):
                 SCREEN_HEIGHT, 
                 [50, 50, 50]
             )
-
+        #lineas horizontales
         for h_l in range(0, SCREEN_HEIGHT, self.pixel_size):
             arcade.draw_line(
                 0, 
@@ -80,46 +67,40 @@ class BresenhamWindow(arcade.Window):
                 [50, 50, 50]
             )
 
-    def draw_circle_points(self, points,  color):
-        for p in points:
-            arcade.draw_point(p[0] * self.pixel_size, p[1] * self.pixel_size, color, self.pixel_size)
-
-    def draw_scaled_circle(self, xc, yc, r):
-        arcade.draw_circle_outline(
-            xc * self.pixel_size, 
-            yc * self.pixel_size, 
-            r * self.pixel_size, 
-            [100, 255, 40, 150], 
-            5
-        )
-
     def draw_line_points(self, points,  color):
         for p in points:
-            arcade.draw_point(p[0] * self.pixel_size, p[1] * self.pixel_size, color, self.pixel_size)
-
-    def draw_scaled_line(self, x0, y0, x1, y1):
-        arcade.draw_line(
-            x0 * self.pixel_size, 
-            y0 * self.pixel_size, 
-            x1 * self.pixel_size, 
-            y1 * self.pixel_size,
-            [100, 255, 40, 150],
-            5
-        )
-
-    def draw_pentagon(self, xc, yc, r, color):
-        # obtener vertices
-        # obtener bordes entre vertices
-        points = get_line(xc,yc,r,0)
-        # dibujar figura
-        arcade.draw_rectangle_outline(points,color)
-        self.draw_line_points(points, color)
+            arcade.draw_point(p[0] * self.pixel_size, p[1] * self.pixel_size, color, self.pixel_size)  
 
     def draw_rectangle(self, x, y, w, h, color):
-        points = get_line(x,y,w,h)
-        arcade.draw_rectangle_outline(x,y,w,h,color)
-        # self.draw_line_points(points, color)
+        points0 = get_line(x,y,x+w,y) 
+        self.draw_line_points(points0,color) 
+        points1 = get_line(x+w,y,x+w,y+h)  
+        self.draw_line_points(points1,color)
+        points2 = get_line(x+w,y+h,x,y+h)  
+        self.draw_line_points(points2,color)
+        points3 = get_line(x,y+h,x,y)  
+        self.draw_line_points(points3,color)
 
+    def draw_triangle_isosceles(self, x, y, b, h, color):
+        points0 = get_line(x, y, x+b, y)
+        self.draw_line_points(points0, color)
+        points1 = get_line(x, y, x + b // 2, y+h)
+        self.draw_line_points(points1, color)
+        points2 = get_line(x+b, y, x + b // 2, y+h)
+        self.draw_line_points(points2, color)
+    
+    def draw_pentagon(self, x, y, r, color):
+        import math
+        points = []
+        for i in range(5):
+            angle = 2 * math.pi * i / 5
+            x_i = x + int(r * math.cos(angle))
+            y_i = y + int(r * math.sin(angle))
+            points.append((x_i, y_i))
+
+        for i in range(5):
+            points_line = get_line(points[i][0], points[i][1], points[(i + 1) % 5][0], points[(i + 1) % 5][1])
+            self.draw_line_points(points_line, color)
 
 if __name__ == "__main__":
     app = BresenhamWindow()
